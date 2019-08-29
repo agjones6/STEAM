@@ -1,0 +1,33 @@
+#!/bin/bash
+# This runs STEAM Code
+
+# Gathering user input
+usrInput=$1
+
+if [[ "$usrInput" = "-m" ]]; then
+    shouldMake=1
+elif [[ "$usrInput" = "-o" ]]; then
+    echo "Do you want to make file ('y' or 'n')"
+    read dum_ans
+
+    if [[ "$dum_ans" == 'y' ]]; then
+        shouldMake=1
+    else
+        shouldMake=0
+    fi
+else
+    shouldMake=0
+fi
+
+# echo $shouldMake
+# exit
+# Changing to the directory of the code
+cd ./STEAM/
+
+# Making the executable if desired
+if [ $shouldMake = 1 ]; then
+    make
+fi
+
+# Running the excutable generated from fortran
+./scode

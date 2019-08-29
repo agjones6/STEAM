@@ -1,0 +1,81 @@
+BWRX300 Version 4
+
+------------------- CONDITIONS -------------------
+total_time                  42                 hrs
+start_time                  25                 hrs
+
+Use_Power_Prof              .TRUE.
+Full_Power_Gains            .FALSE.
+Switch_Profile_Time         0                  hrs
+Switch_Gains_Time           15.5                  hrs
+Control_Method              1                   (CR)
+
+Start_File                  "SnapSnap2.csv"          SnapSnap.csv at 26hrs
+Take_Snapshot               .FALSE.
+Snapshot_Interval           25                   hrs
+Snapshot_Write_File         SnapSnap2.csv
+
+Steam_Demand_File           SUst_BWRX_3.txt
+Steam_Profile_mult          1.0
+
+Xe_and_Sm_Equilibrium       .TRUE.
+Write_Poisons_to_File       .FALSE.
+Read_Poison_File            cPoison.txt
+Write_Poison_File           ""
+
+Power_Profile               SUpwr_BWRX_4.txt
+Pump_Profile                StartPump.txt
+
+CPR_Tolerance               1e-6
+
+
+------------------- GEOMETRY ---------------------
+Clad_Diameter               0.0410833333333     ft
+Clad_Thickness              0.0020833333333     ft
+Rod_Pitch                   0.0533333333333     ft
+Fuel_Height                 12.5                ft
+Chimney_Height              35.0                ft
+Chimney_Diameter            12.6                ft
+Vessel_Diameter             13.9                ft
+Seperator_Length            26.7762             ft
+Lower_Plenum_Height         15.5                ft
+SteamDome_Height            9.14370             ft
+Number_Fuel_Rods            18320               80/100 of each bundle are fuel
+Number_Total_Rods           22900               10x10 array 228 bundles (~20% of ESBWR)
+Nom_Xenon                   78794112268.469009  rel_to_pwr
+Nom_Iodine                  54589134913.952164  rel_to_pwr
+Nom_mSteam                  3906386.77595       lbm/hr
+ref_Press                   1050.0              psia
+initial_Press               1045.0               psia
+TCV_Gain                    3500
+Nom_Rx_Power                900e6               Watts
+
+Initial_SD_Void             0.5
+SD_Area_mult                0.8
+
+
+--------------------- GAINS ----------------------
+TCV_Gain_SU                 70
+TCV_Special_SU              0.01
+
+TCV_Gain_FP                 2000.0
+TCV_Special_FP              1.0
+
+FCV_Gain1_SU                25.0     Level
+FCV_Gain2_SU                30.0     Feed/Steam Mismatch
+FCV_Gain3_SU                7.0    Total
+
+FCV_Gain1_FP                30.0     Level
+FCV_Gain2_FP                50.0     Feed/Steam Mismatch
+FCV_Gain3_FP                75.0     Total
+
+Steam_Follow                1e-4
+Feedwater_Follow            1000
+
+Time_Step_tol_SU            1e-4
+Time_Step_tol_FP            1e-4
+
+Control_Rod_Speed           2000        pcm/hr
+
+
+END_FILE
