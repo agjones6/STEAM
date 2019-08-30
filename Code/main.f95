@@ -190,7 +190,7 @@ PROGRAM Systems_Code_X300
     Q0_Rx   = 0.00                ![Btu/lbm*ft^2]
 
     !-------------------------------> INPUTS <----------------------------------
-    INPUT_FILE = "../InputFiles/BWRX_10.txt" ! <--------------------- THE ONLY THING THAT NEEDS TO BE ALTERED PER RUN
+    INPUT_FILE = "../InputFiles/input_deck.txt" ! <--------------------- THE ONLY THING THAT NEEDS TO BE ALTERED PER RUN
     ! BWRX_10.txt is the newest file
 
     CALL ReadCond(INPUT_FILE, total_time, psuedoTime, &
