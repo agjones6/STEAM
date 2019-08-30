@@ -1,3 +1,2 @@
 Steps for installing fortran on Windows
-  1) Install and setup gitbash
-  2) Install MinGW from the MinGW sourceforge
+  1) 
