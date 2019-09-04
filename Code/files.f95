@@ -123,13 +123,47 @@ CONTAINS
 
     END SUBROUTINE
 
-    SUBROUTINE writeSingle(my_file,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10)
+    SUBROUTINE writeMat(my_file, my_mat, t_index)
+        IMPLICIT NONE
+
+        INTEGER,INTENT(IN):: my_file, t_index
+        INTEGER:: i, n1
+        REAL(8),INTENT(INOUT):: my_mat(:,:)
+
+        !-------Variable Definitions-------!
+        !**INTEGER**   ==>  n1      == Number of junctions
+        !                   my_file == File Number to write to
+        !**REAL**      ==>  my_mat     == array of interest
+        !                   el_time == elapsed time
+        !                   Psys    == System Pressure
+        !**CHARACTER** ==>
+        !**LOGICAL**   ==>
+        !----------------------------------!
+
+        ! Getting the size of the input matrix
+        n1 = SIZE(my_mat,1)
+
+        ! Writing each element of the matrix
+        DO i = 1, n1
+            IF(i .LT. n1) THEN
+                WRITE(my_file,'(F25.10,A)',ADVANCE='NO') my_mat(i,t_index), ","
+            ELSE
+                WRITE(my_file,'(F25.10,A)',ADVANCE='NO') my_mat(i,t_index)
+            END IF
+        END DO
+        WRITE(my_file,*)
+
+    END SUBROUTINE
+
+    SUBROUTINE writeSingle(my_file,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10, &
+                           val11,val12,val13,val14,val15,val16,val17,val18,val19,val20)
         IMPLICIT NONE
 
         ! Filename
         INTEGER,INTENT(IN):: my_file
         ! Up to 10 Inputs to be printed
-        REAL(8),OPTIONAL,INTENT(IN):: val1,val2,val3,val4,val5,val6,val7,val8,val9,val10
+        REAL(8),OPTIONAL,INTENT(IN):: val1,val2,val3,val4,val5,val6,val7,val8,val9,val10, &
+                                      val11,val12,val13,val14,val15,val16,val17,val18,val19,val20
 
 
         !-------Variable Definitions-------!
@@ -143,17 +177,138 @@ CONTAINS
         !----------------------------------!
 
 
-        IF(PRESENT(val1)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val1, ","
-        IF(PRESENT(val2)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val2, ","
-        IF(PRESENT(val3)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val3, ","
-        IF(PRESENT(val4)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val4, ","
-        IF(PRESENT(val5)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val5, ","
-        IF(PRESENT(val6)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val6, ","
-        IF(PRESENT(val7)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val7, ","
-        IF(PRESENT(val8)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val8, ","
-        IF(PRESENT(val9)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val9, ","
+        IF(PRESENT(val1))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val1, ","
+        IF(PRESENT(val2))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val2, ","
+        IF(PRESENT(val3))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val3, ","
+        IF(PRESENT(val4))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val4, ","
+        IF(PRESENT(val5))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val5, ","
+        IF(PRESENT(val6))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val6, ","
+        IF(PRESENT(val7))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val7, ","
+        IF(PRESENT(val8))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val8, ","
+        IF(PRESENT(val9))  WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val9, ","
         IF(PRESENT(val10)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val10, ","
+        IF(PRESENT(val11)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val11, ","
+        IF(PRESENT(val12)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val12, ","
+        IF(PRESENT(val13)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val13, ","
+        IF(PRESENT(val14)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val14, ","
+        IF(PRESENT(val15)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val15, ","
+        IF(PRESENT(val16)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val16, ","
+        IF(PRESENT(val17)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val17, ","
+        IF(PRESENT(val18)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val18, ","
+        IF(PRESENT(val19)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val19, ","
+        IF(PRESENT(val20)) WRITE(my_file,'(F25.10,A)',ADVANCE='NO') val20, ","
         WRITE(my_file,*)
+
+    END SUBROUTINE
+
+    SUBROUTINE writeNames(my_file,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10, &
+                           val11,val12,val13,val14,val15,val16,val17,val18,val19,val20)
+        IMPLICIT NONE
+
+        ! Filename
+        INTEGER,INTENT(IN):: my_file
+        ! Up to 10 Inputs to be printed
+        CHARACTER(LEN=*),OPTIONAL,INTENT(IN):: val1,val2,val3,val4,val5,val6, &
+                                      val7,val8,val9,val10, val11,val12,val13, &
+                                      val14,val15,val16,val17,val18,val19,val20
+
+
+        !-------Variable Definitions-------!
+        !**INTEGER**   ==>
+        !**REAL**      ==>
+        !**CHARACTER** ==> val# == the string that will be written at the top of
+        !                            the csv file
+        !**LOGICAL**   ==>
+        !----------------------------------!
+
+
+        IF(PRESENT(val1))  WRITE(my_file,'(A,A)',ADVANCE='NO') val1, ","
+        IF(PRESENT(val2))  WRITE(my_file,'(A,A)',ADVANCE='NO') val2, ","
+        IF(PRESENT(val3))  WRITE(my_file,'(A,A)',ADVANCE='NO') val3, ","
+        IF(PRESENT(val4))  WRITE(my_file,'(A,A)',ADVANCE='NO') val4, ","
+        IF(PRESENT(val5))  WRITE(my_file,'(A,A)',ADVANCE='NO') val5, ","
+        IF(PRESENT(val6))  WRITE(my_file,'(A,A)',ADVANCE='NO') val6, ","
+        IF(PRESENT(val7))  WRITE(my_file,'(A,A)',ADVANCE='NO') val7, ","
+        IF(PRESENT(val8))  WRITE(my_file,'(A,A)',ADVANCE='NO') val8, ","
+        IF(PRESENT(val9))  WRITE(my_file,'(A,A)',ADVANCE='NO') val9, ","
+        IF(PRESENT(val10)) WRITE(my_file,'(A,A)',ADVANCE='NO') val10, ","
+        IF(PRESENT(val11)) WRITE(my_file,'(A,A)',ADVANCE='NO') val11, ","
+        IF(PRESENT(val12)) WRITE(my_file,'(A,A)',ADVANCE='NO') val12, ","
+        IF(PRESENT(val13)) WRITE(my_file,'(A,A)',ADVANCE='NO') val13, ","
+        IF(PRESENT(val14)) WRITE(my_file,'(A,A)',ADVANCE='NO') val14, ","
+        IF(PRESENT(val15)) WRITE(my_file,'(A,A)',ADVANCE='NO') val15, ","
+        IF(PRESENT(val16)) WRITE(my_file,'(A,A)',ADVANCE='NO') val16, ","
+        IF(PRESENT(val17)) WRITE(my_file,'(A,A)',ADVANCE='NO') val17, ","
+        IF(PRESENT(val18)) WRITE(my_file,'(A,A)',ADVANCE='NO') val18, ","
+        IF(PRESENT(val19)) WRITE(my_file,'(A,A)',ADVANCE='NO') val19, ","
+        IF(PRESENT(val20)) WRITE(my_file,'(A,A)',ADVANCE='NO') val20, ","
+        WRITE(my_file,*)
+
+    END SUBROUTINE
+
+    SUBROUTINE writeProgress(total_time,el_time,num_prog_bars, Unix_Output_Mode, Prog_Bar_length)
+    ! This subroutine will output the current progress of the code to a file
+    IMPLICIT NONE
+
+    ! Inputs
+    REAL(8),INTENT(IN):: total_time,el_time
+    INTEGER,INTENT(IN):: Prog_Bar_length
+    INTEGER,INTENT(INOUT):: num_prog_bars
+    CHARACTER(LEN=*),INTENT(IN):: Unix_Output_Mode
+
+    ! Local
+    INTEGER:: i, tot_num_bars, new_num_prog_bars
+    REAL(8):: progFraction
+    CHARACTER(LEN=:),ALLOCATABLE:: dumStr
+
+    !-------Variable Definitions-------!
+    !**INTEGER**   ==>
+    !**REAL**      ==>
+    !**CHARACTER** ==>
+    !**LOGICAL**   ==>
+    !----------------------------------!
+
+    tot_num_bars = Prog_Bar_length
+    ALLOCATE(CHARACTER(tot_num_bars + 1) :: dumStr)
+    progFraction = el_time / total_time
+
+    new_num_prog_bars = NINT(progFraction * tot_num_bars)
+
+    IF (num_prog_bars .EQ. 0) THEN
+        WRITE(*,'(A,F7.3,A)') "--> Simulation started for ", total_time, "hr"
+    END IF
+
+    ! This is the option for displating a progress bar (default)
+    IF (Unix_Output_Mode .EQ. "progress_bar") THEN
+        IF (new_num_prog_bars .GT. num_prog_bars .OR. num_prog_bars .EQ. 0 ) THEN
+            num_prog_bars = new_num_prog_bars
+            dumStr = "["
+            DO i = 2,tot_num_bars
+                IF( num_prog_bars .GE. i) THEN
+                    dumStr = TRIM(dumStr)//"-"
+                ELSE
+                    dumStr = TRIM(dumStr)//"."
+                END IF
+            END DO
+            dumStr = TRIM(dumStr)//"]"
+
+            WRITE(*,'(A,A,F8.4)') dumStr, "  time =", el_time
+
+        END IF
+    ELSE
+        WRITE(*,*) el_time
+    END IF
+
+    IF (num_prog_bars .EQ. 0) num_prog_bars = 1
+
+    ! WRITE(*,*) Gj(1,1), Psys(1,1), q0hot, ulj(1,1)
+    ! WRITE(*,*) "<----------------------------------------------"
+    ! WRITE(*,*) cPower, cSteamD, el_time, tloop, agn(11,1)
+    ! WRITE(*,*)
+    ! IF(tloop .GE. 3) STOP
+    !Writing the velocities to Vels.csv
+    ! CALL writeVel(Bmat,SIZE(Bmat,1),el_time,loop,q0,Psys(1,2),SIZE(Tn,1), 2, Tn)
+    ! WRITE(*,'(A)',ADVANCE='NO') "o"
 
     END SUBROUTINE
 
@@ -484,112 +639,4 @@ CONTAINS
 
     END SUBROUTINE
 
-    
-
-!     !NOT CURRENTLY IN USE
-!     SUBROUTINE writeoutput(zj,n1,zn,n2,Aj,Tj,hj,agj,n3,An,Vn,Tn,hn,agn,&
-!                            a,aprev,b,bprev,alpha,n4,aspec,bspec,n5)
-!         IMPLICIT NONE
-!
-!         INTEGER,INTENT(IN):: n1, n2, n3, n4, n5
-!         INTEGER:: i, j
-!         REAL(8),INTENT(IN):: zj(n1), zn(n2), Aj(n3), Tj(n3), hj(n3), agj(n3), &
-!                              An(n4), Vn(n4), Tn(n4), hn(n4), agn(n4), a(n4), &
-!                              aprev(n4), b(n4), bprev(n4), alpha(n4,n4), &
-!                              aspec(n5), bspec(n5)
-!
-!         !-------Variable Definitions-------!
-!         !**INTEGER**   ==>  n1      == Number of core junctions
-!         !                   n2      == Number of core nodes
-!         !                   n3      == Number of junctions
-!         !                   n4      == Number of nodes
-!         !                   n5      == Number of 'special' alphas (2)
-!         !                   i,j     == Counter variable
-!         !**REAL**      ==>  zj      == Core junction axial positions
-!         !                   zn      == Core node axial positions
-!         !                   Aj      == Junction cross-sectional areas
-!         !                   Tj      == Junction bulk fluid temperatures
-!         !                   hj      == Junction enthalpies
-!         !                   agj     == Junction void fractions
-!         !                   An      == Node cross-sectional areas
-!         !                   Vn      == Node volumes
-!         !                   Tn      == Node bulk fluid temperatures
-!         !                   hn      == Node enthalpies
-!         !                   agn     == Node void fractions
-!         !                   a       == 'a_n' values, used in the alpha matrix
-!         !                   aprev   == 'a_n-1' values, used in the alpha matrix
-!         !                   b       == 'b_n' values, used in the alpha matrix
-!         !                   bprev   == 'b_n-1' values,used in the alpha matrix
-!         !                   alpha   == 'alpha' matrix, used in the 'A' matrix
-!         !                   aspec   == Special a values: for alpha(1,10),(10,11)
-!         !                   bspec   == Special b values: for alpha(1,10),(10,11)
-!         !**CHARACTER** ==>
-!         !**LOGICAL**   ==>
-!         !----------------------------------!
-!
-!         WRITE(12,'(A)') "|---------------------------------------------------|"
-!         WRITE(12,'(A)') "|---------------CORE: AXIAL POSITIONS---------------|"
-!         WRITE(12,'(A)') "|---------------------------------------------------|"
-!         WRITE(12,'(A)') "|  n  |       JUNCTION       |         NODE         |"
-!         WRITE(12,'(A)') "|---------------------------------------------------|"
-!         DO i = 1,SIZE(zj)
-!             IF(i .EQ. 1) THEN
-!                 WRITE(12,'(A,I1,A,F6.3,A)') &
-!                 "|  ",i, "  |        ",zj(i),"        |                      |"
-!             ELSE
-!                 WRITE(12,'(A,I1,A,2(F6.3,A))') &
-!                 "|  ",i, "  |        ",zj(i),"        |        ",zn(i-1),&
-!                 "        |"
-!             END IF
-!         END DO
-!         WRITE(12,'(A)') "|---------------------------------------------------|"
-!
-!         WRITE(12,*)
-!
-!         WRITE(12,'(A)') "|-----------------------------------------------------------------------------|"
-!         WRITE(12,'(A)') "|----------------------------------GEOMETRY-----------------------------------|"
-!         WRITE(12,'(A)') "|-----------------------------------------------------------------------------|" !51
-!         WRITE(12,'(A)') "|  n  | JUNCTION AREA [ft^2] |   NODE AREA [ft^2]   |   NODE VOLUME [ft^2]    |"
-!         WRITE(12,'(A)') "|-----------------------------------------------------------------------------|"
-!         DO i = 1,SIZE(Aj)
-!             IF(i .EQ. SIZE(Aj)) THEN
-!                 WRITE(12,'(A,I2,A,D9.4,A)') &
-!                 "| ",i, "  |      ",Aj(i),"       |                      |                         |"
-!             ELSE
-!                 WRITE(12,'(A,I2,A,3(D9.4,A))') &
-!                 "| ",i, "  |      ",Aj(i),"       |      ",An(i),"       |        ", &
-!                 Vn(i),"        |"
-!             END IF
-!         END DO
-!         WRITE(12,'(A)') "|-----------------------------------------------------------------------------|"
-!
-!         WRITE(12,*)
-!
-!         WRITE(12,'(A)') "|-----------------------------------------------------------------------------|"
-!         WRITE(12,'(A)') "|---------------------------THERMODYNAMIC VARIABLES---------------------------|"
-!         WRITE(12,'(A)') "|-----------------------------------------------------------------------------|"
-!         WRITE(12,'(A)') "|     |    TEMPERATURE [°F]   |   ENTHALPY [Btu/lbm]  |     VOID FRACTION     |" !17each
-!         WRITE(12,'(A)') "|  n  | JUNCTION  |    NODE   | JUNCTION  |    NODE   | JUNCTION  |    NODE   |"
-!         WRITE(12,'(A)') "|-----------------------------------------------------------------------------|"
-!         DO i = 1,SIZE(Aj)
-!             IF(i .EQ. SIZE(Aj)) THEN
-!                 WRITE(12,'(A,I2,A,3(D9.4,A))') &
-!                 "| ",i, "  | ",Tj(i)," |           | ",hj(i)," |           | ",agj(i)," |           |"
-!             ELSE
-!                 WRITE(12,'(A,I2,A,6(D9.4,A))') &
-!                 "| ",i, "  | ",Tj(i)," | ",Tn(i)," | ",hj(i)," | ",hn(i)," | ",agj(i)," | ",agn(i)," |"
-!             END IF
-!         END DO
-!         WRITE(12,'(A)') "|-----------------------------------------------------------------------------|"
-!
-!         WRITE(12,*)
-!
-!         DO i = 1,SIZE(alpha,1) !Row
-!             DO j = 1,SIZE(alpha,1) !Column
-!                 WRITE(12,'(F11.3,A)',ADVANCE='NO') alpha(i,j), ", "
-!             END DO
-!             WRITE(12,*)
-!         END DO
-!     END SUBROUTINE
-!
 END MODULE

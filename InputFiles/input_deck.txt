@@ -2,7 +2,7 @@ BWRX300 Version 10 --> 1.32
 used to be named BWRX_10.txt
 
 ------------------- CONDITIONS -------------------
-total_time                  3.4                hrs
+total_time                  2.0                hrs
 start_time                  0                 hrs
 
 Use_Power_Prof              .FALSE.
@@ -16,7 +16,7 @@ Take_Snapshot               .FALSE.
 Snapshot_Interval           3.5                   hrs
 Snapshot_Write_File         "../OutputFiles/snap_shot"
 
-Steam_Demand_File           "../InputFiles/steam_demand.txt"       
+Steam_Demand_File           "../InputFiles/steam_demand.txt"
 Steam_Profile_mult          1.0
 
 Xe_and_Sm_Equilibrium       .TRUE.
@@ -79,5 +79,17 @@ Time_Step_tol_FP            1e-4
 
 Control_Rod_Speed           5000        pcm/hr
 
+
+--------------------- OUTPUT ---------------------
+Unix_Output_Mode            progress_bar
+Progress_Bar_Length         10
+
+Velocity_File               "../OutputFiles/velMat.csv"
+Internal_Energy_File        "../OutputFiles/uMat.csv"
+Density_File                "../OutputFiles/densMat.csv"
+Vapor_Void_File             "../OutputFiles/voidMat.csv"
+Reactivity_File             "../OutputFiles/reactivity.csv"
+General_Value_File          "../OutputFiles/singleVals.csv"
+Convergence_File            "../OutputFiles/convMat.csv"
 
 END_FILE

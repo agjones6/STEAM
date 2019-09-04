@@ -1,9 +1,13 @@
 ### General Use of STEAM (Scaled Time-dependent ESBWR Analysis Model)
 1) Running the code (using unix commands)
   - run without compiling fortran code './runSTEAM'
+  - the options listed below can be used together or seperately by putting a space
+    between the options (ie: './runSTEAM -m -s')
   - run with compiling fortran code './runSTEAM -m'
     * do this if the source code is changed
     * do this if changing operating systems
+  - run without executing the code './runSTEAM -s'
+    * this can be used to check if there are any compiling errors without running the actual code
 2) Changing the input deck (in InputFiles)
   - the file is named 'input_deck.txt'
   - the standard setup starts the reactor at full power

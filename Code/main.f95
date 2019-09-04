@@ -46,7 +46,7 @@ PROGRAM Systems_Code_X300
     vl1, vl2, Psys(1,2), tcvPos, Aj12, dqdt, total_time, qi, qf, d_ul11,   &
     al_rhol11(1,2), cPower, pPower, cPump, cSteamD, snapCur = 0, snapInt, tcvVel, Pprev,&
     Vgj, dPrev, TFD, CPR, Gain, Gainf, psuedoTime, CPRtol, G1, G2, G3, stFollowG, &
-    cC, react, react_CR, avg_void, rho_ex, rho_fuel, rho_void, G_feed, Q0_Rx, Q0_f, &
+    cC, rho_net, rho_CR, avg_void, rho_ex, rho_fuel, rho_void, rho_Xe, G_feed, Q0_Rx, Q0_f, &
     N_I, N_Xe, RelXe, avg_void1, avg_void2, avg_void3, avg_void4,&
     avg_relPwr, avg_relPwr1, avg_relPwr2, avg_relPwr3, avg_relPwr4, &
     switch_Prof_time, switch_Gain_time, tStep_tol_SU, tStep_tol_FP, Linear_Heat_Rate
@@ -55,7 +55,9 @@ PROGRAM Systems_Code_X300
     TakeSnap = .TRUE., PoisonEquil = .TRUE., has_Prof_Switched = .FALSE., has_Gain_Switched = .FALSE.
 
     CHARACTER(LEN=75):: StartFile, SnapFile, SteamFile, PwrFile, PumpFile, &
-                          readPoisonFile, writePoisonFile, INPUT_FILE
+                          readPoisonFile, writePoisonFile, INPUT_FILE, Unix_Output_Mode, &
+                          velFileName, uFileName, densFileName, voidFileName, &
+                          reactFileName, singleValFileName, convergenceFileName
     REAL(4):: time_mult
 
     !Time Control Variables
@@ -63,7 +65,7 @@ PROGRAM Systems_Code_X300
     !Temporary
     REAL(8):: a12, a11, a9, b12, b11, b9, al9, DP1(7), K, Vjn, &
                 test(13,1), dum1(11,1), q0hot
-    INTEGER:: testcounter, tcvCount, cont_meth
+    INTEGER:: testcounter, tcvCount, cont_meth, num_prog_bars, Prog_Bar_length
 
 
     !-------Variable Definitions-------!
@@ -150,34 +152,6 @@ PROGRAM Systems_Code_X300
     !**LOGICAL**   ==>  conv      ==  Convergence boolean
     !----------------------------------!
 
-    !---> Debugging Files
-    ! CALL openfile(11,'Output.csv')
-    ! CALL openfile(13,'Vel.csv')
-    ! CALL openfile(14,'Vel2.csv')
-    ! CALL openfile(15,'VelMat.csv')
-
-    CALL openfile(16,'../OutputFiles/velocityMat.csv') ! /SysCoX300_v2
-
-    CALL openfile(17,'../OutputFiles/uMat.csv')
-    CALL openfile(18,'../OutputFiles/densMat.csv')
-    CALL openFile(19,'../OutputFiles/voidMat.csv')
-    CALL openfile(20,'../OutputFiles/convMat.csv')
-    CALL openfile(21,'../OutputFiles/relVMat.csv')
-    CALL openfile(22,'../OutputFiles/reactivity.csv')
-    CALL openfile(23,'../OutputFiles/random.csv')
-
-
-
-    ! CALL openFile(21,'TestyTest.csv')
-
-
-    ! CALL openFile(31,'IntervalSnap.csv')
-
-    ! Xenon and Iodine File
-    ! CALL openfile(62,'myPoison.txt')
-
-    !CALL testsub()
-
     !===============================================================================
     !                   INITIALIZING THE SYSTEM and INPUTS
     !===============================================================================
@@ -188,6 +162,7 @@ PROGRAM Systems_Code_X300
     dt      = 1e-2                ![hr]
     dtmax   = 0.1                 ![hr]
     Q0_Rx   = 0.00                ![Btu/lbm*ft^2]
+    num_prog_bars = 0
 
     !-------------------------------> INPUTS <----------------------------------
     INPUT_FILE = "../InputFiles/input_deck.txt" ! <--------------------- THE ONLY THING THAT NEEDS TO BE ALTERED PER RUN
@@ -198,8 +173,19 @@ PROGRAM Systems_Code_X300
                   StartFile, TakeSnap, snapInt, SnapFile, SteamFile, stFollowG,&
                   readPoisonFile, time_mult, cont_meth, G_feed, &
                   PoisonEquil, writePoisonFile, PwrFile, PumpFile, CPRtol, &
-                  tStep_tol_SU, tStep_tol_FP)
+                  tStep_tol_SU, tStep_tol_FP,Unix_Output_Mode,Prog_Bar_length, &
+                  velFileName, uFileName, densFileName, voidFileName, &
+                  reactFileName, singleValFileName, convergenceFileName)
     !-------------------------> USING INPUTS <----------------------------------
+    ! Opening Files
+    CALL openfile(16,velFileName)
+    CALL openfile(17,uFileName)
+    CALL openfile(18,densFileName)
+    CALL openFile(19,voidFileName)
+    CALL openfile(22,reactFileName)
+    CALL openfile(23,singleValFileName)
+    CALL openfile(20,convergenceFileName)
+
     !Assign Geometry
     CALL AssignGeometry(Aj,An,Vn,zj,zn,Ln,Kn,De_n)
 
@@ -407,9 +393,9 @@ PROGRAM Systems_Code_X300
             ! CALL Steam_Pwr(cSteamD, msteam, cPower, pPower, Q0_f, q0hot, dt, &
             !                SteamFollowG = stFollowG)
 
-            ! Testing Reactivity Subroutine
-            CALL React_Cont(cSteamD, msteam, react, react_CR, avg_relPwr, cPower, cC, avg_void, &
-                            Q0_f, q0hot, el_time, dt, tloop, rho_ex, rho_fuel, rho_void, TFD, &
+            ! Reactivity Controller
+            CALL React_Cont(cSteamD, msteam, rho_net, rho_CR, avg_relPwr, cPower, cC, avg_void, &
+                            Q0_f, q0hot, el_time, dt, tloop, rho_ex, rho_fuel, rho_void, rho_Xe, TFD, &
                             cont_meth, G_feed, RelXe, N_Xe, N_I, SteamFollowG = stFollowG)
 
             ! Calculating the Heat Going into the fluid
@@ -837,28 +823,40 @@ PROGRAM Systems_Code_X300
         CALL phase_vel(y,y2,Gj(8,2),Xj(8,2),agj(8,2),Psys(1,2),8)
 
         Linear_Heat_Rate = (cPower * gf)/(n_frods * Hfuel)
-        ! Writing to files
-        y2 = kloop
-        CALL writeVel2(v_j,2,el_time,Psys(1,2),dt,16)         ! Velocity
-        CALL writeVel2(Tn,2,agn(11,1),TFD,cPower,17)          ! Internal Energy
-        CALL writeVel2(rhon,2,el_time,tcvPos,cSteamD,18)      ! Density
-        CALL writeVel2(agn,2,msteam,mfeed,react_CR,19)        ! Void Fraction
-        CALL writeVel2(v_j,2,N_I,CPR,N_Xe,21)                  ! Relative Velocity
-        CALL writeSingle(23,Linear_Heat_Rate,cPower)
+
+        ! ---> WRITING TO FILES
+        ! Writing the names of the single values on top of the column in the csv in the first iteration
+        IF ( tloop .EQ. 1 ) THEN
+            CALL writeNames(16, "MATRIX", "junction_velocity")
+            CALL writeNames(17, "MATRIX", "nodal_temperature")
+            CALL writeNames(18, "MATRIX", "nodal_density")
+            CALL writeNames(19, "MATRIX", "nodal_vapor_void")
+            CALL writeNames(22,"rho_net","rho_ex","rho_void","rho_fuel","rho_CR","rho_Xe")
+            CALL writeNames(23,"el_time","Psys","dt","TFD","cPower","tcvPos", &
+                          "cSteamD","msteam","mfeed","N_I","N_Xe","CPR", &
+                          "Linear_Heat_Rate","cPower")
+        END IF
+
+        ! Writing matrices
+        CALL writeMat(16, v_j, 2)        ! Velocity
+        CALL writeMat(17, Tn, 2)         ! Internal Energy
+        CALL writeMat(18, rhon, 2)       ! Density
+        CALL writeMat(19, agn, 2)        ! Void Fraction
+
+        ! Writing Single values
+        CALL writeSingle(22,rho_net,rho_ex,rho_void,rho_fuel,rho_CR,rho_Xe) ! Reactivity
+        CALL writeSingle(23,el_time,Psys(1,2),dt,TFD,cPower,tcvPos, &
+                          cSteamD,msteam,mfeed,N_I,N_Xe,CPR,Linear_Heat_Rate,cPower) ! Other
+
+        ! Writing to the output window
+        CALL writeProgress(total_time, el_time, num_prog_bars, Unix_Output_Mode, Prog_Bar_length)
 
         !---> Updating properties for the t loop
         CALL UpdateProps_t(Psys,al_rhol11,Tn,Tj,agn,agj,rhon,rhoj,uln,ulj, &
                            rho_un,rho_uj,Xn,Xj,Gj,v_j,Pprev)
 
+        ! Increasing the elapsed time 
         el_time = el_time + dt
-
-        ! WRITE(*,*) Gj(1,1), Psys(1,1), q0hot, ulj(1,1)
-        WRITE(*,*) "<----------------------------------------------"
-        WRITE(*,*) cPower, cSteamD, el_time, tloop, agn(11,1)
-        ! WRITE(*,*)
-        ! IF(tloop .GE. 3) STOP
-        !Writing the velocities to Vels.csv
-        ! CALL writeVel(Bmat,SIZE(Bmat,1),el_time,loop,q0,Psys(1,2),SIZE(Tn,1), 2, Tn)
 
         ! Writing the last poison value to a file
         IF(writePoisonFile .NE. "") THEN

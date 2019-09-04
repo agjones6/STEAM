@@ -1,12 +1,2 @@
 
-
-*.csv
-!FullPowerSnap.csv
-!HalfPowerSnap.csv
-!FullPower0.csv
-!FP_BWRX_10.csv
-VelMat.csv
-AJ_test.f95
-
-
-*.a
+OutputFiles/*

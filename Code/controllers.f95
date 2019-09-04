@@ -174,9 +174,9 @@ CONTAINS
             Error2 = 0
         END IF
 
-        WRITE(*,*)
-        WRITE(*,*) "Error 1 -->", Error1
-        WRITE(*,*) "Error 2 -->", Error2
+        ! WRITE(*,*)
+        ! WRITE(*,*) "Error 1 -->", Error1
+        ! WRITE(*,*) "Error 2 -->", Error2
 
         Error  = G1*Error1 + G2*Error2
 
@@ -187,11 +187,11 @@ CONTAINS
         ! ELSE
         !     mfeednew = mfeed * (1 + Dfeed)
         ! END IF
-        WRITE(*,*) "Dfeed     -->", Dfeed
-        WRITE(*,*) "Old mfeed -->", mfeed
-        WRITE(*,*) "New mfeed -->", mfeednew
+        ! WRITE(*,*) "Dfeed     -->", Dfeed
+        ! WRITE(*,*) "Old mfeed -->", mfeed
+        ! WRITE(*,*) "New mfeed -->", mfeednew
         IF(mfeednew .LT. 0) mfeednew = 0
-        WRITE(*,*)
+        ! WRITE(*,*)
     END SUBROUTINE
 
 
@@ -343,7 +343,7 @@ CONTAINS
                 !Difference is greater than the allowed tolerance
                 IF( maxeps .GT. tol2 ) THEN
                     IF(dt/2. .GT. dtmin) THEN !When the loop actually changes time step
-                        WRITE(*,'(A)')"Converged went back down due to epsilon "
+                        ! WRITE(*,'(A)')"Converged went back down due to epsilon "
                         dt_change = .TRUE.
                         converged = .FALSE.
                         kloop     = 0
@@ -367,7 +367,7 @@ CONTAINS
                 ELSE !(maxeps .LE. tol3)
                     dt = MIN(dtmax, 1.2*dt)
                     dt_change = .FALSE.
-                    WRITE(*,*) "Converged and Increased Time Step <<----"
+                    ! WRITE(*,*) "Converged and Increased Time Step <<----"
                     ! WRITE(*,'(A)')"Over"
                     RETURN
                 END IF
@@ -613,8 +613,8 @@ CONTAINS
 
     END SUBROUTINE
 
-    SUBROUTINE React_Cont(cSteamD, msteam, react, react_CR, avg_relPwr, Pnew, Cnew, avg_void,  &
-                          Q0, q0hot, el_time, dt, tloop, rho_ex, rho_fuel, rho_void, TFD, &
+    SUBROUTINE React_Cont(cSteamD, msteam, rho_net, rho_CR, avg_relPwr, Pnew, Cnew, avg_void,  &
+                          Q0, q0hot, el_time, dt, tloop, rho_ex, rho_fuel, rho_void, rho_Xe, TFD, &
                           cont_meth, G_feed, RelXe, N_Xe, N_I, SteamFollowG, nomSteam )
         ! This controls reactor power based on reactivity
         IMPLICIT NONE
@@ -624,8 +624,8 @@ CONTAINS
         INTEGER, INTENT(IN):: tloop
         INTEGER, INTENT(INOUT):: cont_meth
         REAL(8), OPTIONAL,INTENT(IN):: nomSteam, SteamFollowG, avg_void
-        REAL(8), INTENT(INOUT):: Pnew, Cnew, react, react_CR, rho_ex, rho_fuel, &
-                                rho_void, TFD, G_feed, RelXe, N_Xe, N_I
+        REAL(8), INTENT(INOUT):: Pnew, Cnew, rho_net, rho_CR, rho_ex, rho_fuel, &
+                                rho_void, rho_Xe, TFD, G_feed, RelXe, N_Xe, N_I
 
         !Outpus
         REAL(8), INTENT(OUT):: Q0, q0hot
@@ -652,7 +652,7 @@ CONTAINS
         !                   cmSteam   == Current steam mass flow rate [lbm/hr]
         !
         !                   reactD    == The Current Reactivity Demand
-        !                   react_CR  == Control Rod Reactivity
+        !                   rho_CR  == Control Rod Reactivity
         !                   TFD       == Feedwater temperature [°F]
         !                   cont_meth == the method desired to follow load
         !
@@ -697,18 +697,18 @@ CONTAINS
         ! Calculating a new Reactivity Demand
         reactD   = (Error1 * G1 + Error2 * G2)
 
-        CALL React_Dem(el_time, tloop, dt, avg_void, RelPwr, RelXe, react_CR, reactD, react, &
-                       rho_ex, rho_fuel, rho_void, TFD, cont_meth, G_feed)
+        CALL React_Dem(el_time, tloop, dt, avg_void, RelPwr, RelXe, rho_CR, reactD, rho_net, &
+                       rho_ex, rho_fuel, rho_void, rho_Xe, TFD, cont_meth, G_feed)
 
-        IF(ABS(react) .LT. 1e-12) react = 0
+        IF(ABS(rho_net) .LT. 1e-12) rho_net = 0
 
         !---> Calculating a New Reactor Power
         ! Reactivity terms
         betaR   = 0.0065
         lambdaR = 0.08  ! [1/s]
         l       = 1e-4    ! [s] ?
-        Tou1    = ((1 - react) * l)/(react - betaR)
-        Tou2    = ((1 - react) * l)/(betaR)
+        Tou1    = ((1 - rho_net) * l)/(rho_net - betaR)
+        Tou2    = ((1 - rho_net) * l)/(betaR)
         bR      =  lambdaR - 1/Tou1
         cR      = -lambdaR*(1/Tou1 + 1/Tou2)
         alpha1  = (1/2.0)*(-bR + SQRT(bR**2.0 - 4.0*cR))
@@ -731,13 +731,13 @@ CONTAINS
 
         Pnew = ABS(Pnew)
         Cnew = ABS(Cnew)
-        ! WRITE(*,*) "Reactivity ->", react*1e5, "pcm"
+        ! WRITE(*,*) "Reactivity ->", rho_net*1e5, "pcm"
         ! WRITE(*,*) "  Tou1 & 2 ->", Tou1, Tou2
         ! WRITE(*,*) "alpha1 & 2 ->", alpha1, alpha2
         ! WRITE(*,*) "   b and c ->", bR, cR
         ! WRITE(*,*) "     Power ->", P0, Pnew, (Pnew - P0)/Nom_Power
         ! WRITE(*,*) "     Conc  ->", C0, Cnew
-        ! WRITE(*,*) "        CR ->", react_CR * 1e5
+        ! WRITE(*,*) "        CR ->", rho_CR * 1e5
         ! STOP
 
         ! Ensuring reactor power can't surpass 900MW
@@ -763,7 +763,7 @@ CONTAINS
     END SUBROUTINE
 
     SUBROUTINE React_Dem(el_time, tloop, dt, avg_void, RelPwr, RelXe, rho_CR, rho_demand, &
-                         rho_net, rho_ex, rho_fuel, rho_void, TFD, cont_meth, G_feed)
+                         rho_net, rho_ex, rho_fuel, rho_void, rho_Xe, TFD, cont_meth, G_feed)
     ! This subroutine makes up for a reactivity demand using a method of reactivity control
     IMPLICIT NONE
 
@@ -772,11 +772,11 @@ CONTAINS
     INTEGER,INTENT(IN):: tloop
     INTEGER,INTENT(INOUT):: cont_meth
     REAL(8),INTENT(INOUT):: rho_CR, rho_ex, rho_fuel, rho_void, TFD, G_feed, rho_demand
-    REAL(8),INTENT(OUT):: rho_net
+    REAL(8),INTENT(OUT):: rho_net, rho_Xe
 
     ! Local
     REAL(8):: alpha_fuel, alpha_void, alpha_Xe, init_CR, drhodt_lim, drhodt, &
-              rho_CR0, rho_Xe
+              rho_CR0
     LOGICAL:: cb = .FALSE.
 
     !-------Variable Definitions-------!
@@ -850,9 +850,6 @@ CONTAINS
     !--> Final Net Reactivity
     rho_net = rho_void + rho_fuel + rho_ex + rho_CR + rho_Xe
     ! rho_net = rho_demand
-
-    ! Writing the Reactivity
-    CALL writeSingle(22,rho_net,rho_ex,rho_void,rho_fuel,rho_CR,rho_Xe,el_time)
 
     IF(cb) cont_meth = 2
 

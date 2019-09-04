@@ -1,28 +1,47 @@
 #!/bin/bash
 # This runs STEAM Code
 
-# Gathering user input
-usrInput=$1
+# Setting user input starting points
+shouldMake=0 # Default is to not compile
+shouldExecute=1 # Default is to execute the file
 
-if [[ "$usrInput" = "-m" ]]; then
-    shouldMake=1
-elif [[ "$usrInput" = "-o" ]]; then
-    echo "Do you want to make file ('y' or 'n')"
-    read dum_ans
-
-    if [[ "$dum_ans" == 'y' ]]; then
+# Loops through all of the user input
+for usrInput in "$@"
+do
+    # Testing if the program should make the executable (compile)
+    if [[ "$usrInput" = "-m" ]]; then
         shouldMake=1
-    else
-        shouldMake=0
+
+    # Testing if the program should execute the executable
+    elif [[ "$usrInput" = "-s" ]]; then
+        shouldExecute=0
+
+    # Guided UserInput
+    elif [[ "$usrInput" = "-o" ]]; then
+        echo "Do you want to make file ('y' or 'n')"
+        read dum_ans
+
+        if [[ "$dum_ans" == 'y' ]]; then
+            shouldMake=1
+        fi
+
+        echo "Do you want to execute the file ('y' or 'n')"
+        read dum_ans
+
+        if [[ "$dum_ans" == 'n' ]]; then
+            shouldExecute=0
+        fi
+
+    # elif [ $shouldMake = 0 ]; then
+    #     shouldMake=0
     fi
-else
-    shouldMake=0
-fi
+
+done
 
 # echo $shouldMake
 # exit
 # Changing to the directory of the code
-cd ./STEAM/
+cd ./Code/
 
 # Making the executable if desired
 if [ $shouldMake = 1 ]; then
@@ -30,4 +49,8 @@ if [ $shouldMake = 1 ]; then
 fi
 
 # Running the excutable generated from fortran
-./scode
+if [ $shouldExecute = 1 ]; then
+
+    ./scode
+
+fi

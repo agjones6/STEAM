@@ -578,7 +578,9 @@ CONTAINS
                         StartFile, TakeSnap, snapInt, SnapFile, SteamFile, stFollowG,&
                         readPoisonFile, time_mult, cont_meth, G_feed, &
                         PoisonEquil, writePoisonFile, PwrFile, PumpFile, CPRtol, &
-                        tStep_tol_SU,tStep_tol_FP)
+                        tStep_tol_SU,tStep_tol_FP, Unix_Output_Mode, Prog_Bar_length, &
+                        velFileName, uFileName, densFileName, voidFileName, &
+                        reactFileName, singleValFileName, convergenceFileName)
         ! This subroutine will read in the geometry of the system
         IMPLICIT NONE
 
@@ -588,7 +590,11 @@ CONTAINS
         ! --> Outputs
         CHARACTER(LEN=*),INTENT(INOUT):: StartFile, &
                                           SnapFile, SteamFile, readPoisonFile, &
-                                          writePoisonFile, PwrFile, PumpFile
+                                          writePoisonFile, PwrFile, PumpFile, &
+                                          Unix_Output_Mode, velFileName, &
+                                          uFileName, densFileName, voidFileName, &
+                                          reactFileName, singleValFileName, &
+                                          convergenceFileName
 
         REAL(8),INTENT(INOUT):: total_time, psuedoTime, snapInt, CPRtol,stFollowG, &
                                 G_feed, switch_Prof_time, switch_Gain_time, &
@@ -597,7 +603,7 @@ CONTAINS
 
         LOGICAL,INTENT(INOUT):: StartUpCond, SysAtPwr, TakeSnap, PoisonEquil
 
-        INTEGER,INTENT(INOUT):: cont_meth
+        INTEGER,INTENT(INOUT):: cont_meth, Prog_Bar_length
 
         ! Local
         REAL(8):: dum_real
@@ -863,6 +869,46 @@ CONTAINS
                 BACKSPACE(UNIT = UNIT)
                 READ(UNIT,*) dum1, CR_INS_LIMIT
             END IF
+
+            ! ----------------------- OUTPUT ------------------------------------
+            IF(TRIM(dum1) .EQ. "Unix_Output_Mode") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, Unix_Output_Mode
+            END IF
+            IF(TRIM(dum1) .EQ. "Progress_Bar_Length") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, Prog_Bar_length
+            END IF
+
+            IF(TRIM(dum1) .EQ. "Velocity_File") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, velFileName
+            END IF
+            IF(TRIM(dum1) .EQ. "Internal_Energy_File") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, uFileName
+            END IF
+            IF(TRIM(dum1) .EQ. "Density_File") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, densFileName
+            END IF
+            IF(TRIM(dum1) .EQ. "Vapor_Void_File") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, voidFileName
+            END IF
+            IF(TRIM(dum1) .EQ. "Reactivity_File") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, reactFileName
+            END IF
+            IF(TRIM(dum1) .EQ. "General_Value_File") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, singleValFileName
+            END IF
+            IF(TRIM(dum1) .EQ. "Convergence_File") THEN
+                BACKSPACE(UNIT = UNIT)
+                READ(UNIT,*) dum1, convergenceFileName
+            END IF
+
 
             IF(TRIM(dum1) .EQ. "END_FILE") RETURN
         END DO
