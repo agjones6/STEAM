@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib as mpl
 import os
+import dataclasses 
 from dataclasses import dataclass
 # import os.path
 from os import path
@@ -14,10 +15,12 @@ class allData:
     type: any
     name: any
     data: any
+    File: any
 
 allData.type = []
 allData.name = []
 allData.data = []
+allData.File = []
 
 # Reading through every file in the output file director
 outputFileLocation = "OutputFiles"
@@ -33,7 +36,7 @@ for filename in os.listdir(outputFileLocation):
 
     # Opening the file
     count_line = 1
-    data = csv.reader(open(cFileString))
+    allData.File.append(csv.reader(open(cFileString)))
     # print(data)
     tst = []
     # next(data)
@@ -49,7 +52,7 @@ for filename in os.listdir(outputFileLocation):
 
     # # Reading the first line of the file to determine if it is the right type
     # count_line = 1
-    for spltLine in data:
+    for spltLine in allData.File[-1]:
 
         # This checks to see if the file is a csv that is expected. (Skips files not formatted correctly)
         # try:
@@ -86,10 +89,10 @@ for filename in os.listdir(outputFileLocation):
                     allData.data[-1] = np.vstack((allData.data[-1],cData))
 
         count_line = count_line + 1
-        if (count_line > 1e6):
+        if (count_line > 100):
             break
 
-    # break
+    break
 
 
 # print(allData.data[0][:][:].shape)
