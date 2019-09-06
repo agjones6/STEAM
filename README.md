@@ -19,6 +19,57 @@
   - The matlab code in the analysis folder can read all of the files.
   - In the future, a python script is going to be made and the output files will be consolidated.
 
+### Analysis
+#### Python File
+- The python script reads all of the .csv files in the 'OutputFiles' directory
+- All of the functions used in the plot_STEAM.py script are in functions_STEAM.py
+- plot_STEAM.py
+  * Pulling in Data
+    + function: get_data(output_directory, skip_lines_num) -> This gives a structure
+      with fields of 'type' (type of data), 'name' (name of the data),
+      'data' (the actual numbers), and 'file' (file identifier).
+    + 'output_directory' -> The location of the csv output files from running
+      the STEAM code. Should be "OutputFiles"
+    + 'skip_lines_num' -> This dictates how many state points are read in as data.
+       For example: if the value is 3, only every 3rd state point will be read in
+       as data. This is used to speed the code up. The lower the number, the higher
+       the resolution of the plot but the code will run slower. The higher the number
+       the lower the resolution of the plot but the code will run faster.
+  * Basic Plotting
+    + function: plot_data(data_structure, string_array)
+    + 'plot_data' plots values based on the inputted string matrix vs elapsed time.
+    + 'data_structure' -> The strucure of data from the 'get_data' function
+    + 'string_array' -> An array of strings used to pull in 1 or more sets of data.
+      All of the strings in the array will be plotted. The options for plotting can
+      be found in data_structure.name. By default, this will be printed to the window
+      to show what can be plotted.
+    + example plotting 3 values on the same plot:
+      plot_data(data_structure, "rho_CR", "rho_fuel", "rho_Xe"])
+      plt.show()
+    + NOTE: plt.show() NEEDS to be used after calling the function. The plot
+      WILL NOT show unless this is used. 
+  * Plot Options
+    + When calling the plot function: plot_data(data,string_array,option,value)
+      listed below are the options and result from using the value. All of the
+      options are treated as optional input variables meaning they aren't needed
+      for the plotting to work. Additionally, the user can use as many options as desired.
+    + "type":
+      - "matrix" -> This is for viewing nodal/junction values. The legend will
+        be integers up to the number of values. ie plot_data(data, string_array, "type", "matrix")
+      - else -> This is for plotting values that only have one value per time step.
+        This does not require the us
+    + "title":
+      - string that is the title of the plot. ie plot_data(data, string_array, "title", "Temperature") will have a title of Temperature
+    + "xlabel":
+      - string that is the xlabel of the plot
+    + "ylabel":
+      - string that is the ylabel of the plot
+    + "yscale":
+      - "linear" -> This provides a linear y-axis
+      - "log" -> This provides a logarithmic y-axis
+    + DEFAULT: type = else, title = "", xlabel = "time (hr)", ylabel = "", yscale = "linear"
+
+
 ### Specific Case Runs
 #### USING HEAT INPUT STARTING AT DESIRED CONDITIONS
 1) Change StartUpCond = .TRUE.
