@@ -2,8 +2,8 @@ BWRX300 Version 10 --> 1.32
 used to be named BWRX_10.txt
 
 ------------------- CONDITIONS -------------------
-total_time                  1.5                hrs
-start_time                  0.0                hrs
+total_time                  5.0                hrs
+start_time                  0                 hrs
 
 Use_Power_Prof              .FALSE.
 Full_Power_Gains            .TRUE.
@@ -12,8 +12,8 @@ Switch_Gains_Time           0                  hrs
 Control_Method              1                  (CR)
 
 Start_File                  "../InputFiles/full_power_cond"          SnapSnap.csv at 15.4 hrs
-Take_Snapshot               .TRUE.
-Snapshot_Interval           0.6                   hrs
+Take_Snapshot               .FALSE.
+Snapshot_Interval           3.5                   hrs
 Snapshot_Write_File         "../OutputFiles/snap_shot"
 
 Steam_Demand_File           "../InputFiles/benchmark.txt"

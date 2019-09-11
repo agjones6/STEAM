@@ -28,7 +28,7 @@ outputFileLocation = "OutputFiles"
 # This is the number of time steps to pass over when pulling in data
 #  NOTE: The lower the number the slower the script but the finer the resolution
 #        The higher the number the faster the script but the coarser the resolution
-skip_lines_num = 50
+skip_lines_num = 100
 
 # %% Getting the data for plotting
 #  NOTE: This is the most time intensive part of the script
