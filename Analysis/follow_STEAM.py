@@ -32,14 +32,12 @@ skip_lines_num = 100
 
 # %% Getting the data for plotting
 #  NOTE: This is the most time intensive part of the script
-my_data = get_data(outputFileLocation, skip_lines_num)
+myStr = ["rho_CR", "rho_fuel","rho_Xe"] # "nodal_density", IT ISNT WORKING FOR MATRICES YET
+my_data = get_data2(outputFileLocation, skip_lines_num,myStr)
 
-print(my_data.name)
-
-# %% Plotting
-myStr = ["rho_CR", "rho_fuel","rho_Xe"]
-plot_data(my_data,myStr,"title","reactivity stuff")
-
-myStr = ["junction_velocity"]
-plot_data(my_data,myStr,"type","matrix","yscale","log")
-plt.show()
+# print(my_data.data)
+# # %% Plotting
+#
+# myStr = ["junction_velocity"]
+# plot_data(my_data,myStr,"type","matrix","yscale","log")
+# plt.show()
